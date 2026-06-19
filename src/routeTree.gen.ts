@@ -9,50 +9,137 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedEmailsIndexRouteImport } from './routes/_authenticated/emails.index'
+import { Route as AuthenticatedEmailsCategoryCategoryRouteImport } from './routes/_authenticated/emails.category.$category'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedEmailsIndexRoute =
+  AuthenticatedEmailsIndexRouteImport.update({
+    id: '/emails/',
+    path: '/emails/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedEmailsCategoryCategoryRoute =
+  AuthenticatedEmailsCategoryCategoryRouteImport.update({
+    id: '/emails/category/$category',
+    path: '/emails/category/$category',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/auth': typeof AuthRoute
+  '/emails/': typeof AuthenticatedEmailsIndexRoute
+  '/emails/category/$category': typeof AuthenticatedEmailsCategoryCategoryRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/emails': typeof AuthenticatedEmailsIndexRoute
+  '/emails/category/$category': typeof AuthenticatedEmailsCategoryCategoryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/emails/': typeof AuthenticatedEmailsIndexRoute
+  '/_authenticated/emails/category/$category': typeof AuthenticatedEmailsCategoryCategoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/auth' | '/emails/' | '/emails/category/$category'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/auth' | '/' | '/emails' | '/emails/category/$category'
+  id:
+    | '__root__'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/'
+    | '/_authenticated/emails/'
+    | '/_authenticated/emails/category/$category'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/emails/': {
+      id: '/_authenticated/emails/'
+      path: '/emails'
+      fullPath: '/emails/'
+      preLoaderRoute: typeof AuthenticatedEmailsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/emails/category/$category': {
+      id: '/_authenticated/emails/category/$category'
+      path: '/emails/category/$category'
+      fullPath: '/emails/category/$category'
+      preLoaderRoute: typeof AuthenticatedEmailsCategoryCategoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedEmailsIndexRoute: typeof AuthenticatedEmailsIndexRoute
+  AuthenticatedEmailsCategoryCategoryRoute: typeof AuthenticatedEmailsCategoryCategoryRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedEmailsIndexRoute: AuthenticatedEmailsIndexRoute,
+  AuthenticatedEmailsCategoryCategoryRoute:
+    AuthenticatedEmailsCategoryCategoryRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
