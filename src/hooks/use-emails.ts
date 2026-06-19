@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase, type EmailRow, type EmailCategoryRow, type EmailSummaryRow } from "@/integrations/supabase/client";
+import { supabase, type EmailRow } from "@/integrations/supabase/client";
 import { categoryFromRaw, type CategoryMeta } from "@/lib/categories";
 
 export type JoinedEmail = EmailRow & {
@@ -8,37 +8,43 @@ export type JoinedEmail = EmailRow & {
   category: CategoryMeta;
 };
 
-type RawJoined = EmailRow & {
-  email_summaries: EmailSummaryRow[] | null;
-  email_categories: EmailCategoryRow[] | null;
+type DashboardRow = {
+  id?: string | number;
+  gmail_message_id: string;
+  gmail_thread_id?: string | null;
+  sender?: string | null;
+  subject?: string | null;
+  snippet?: string | null;
+  body?: string | null;
+  created_at: string;
+  summary?: string | null;
+  category?: string | null;
 };
-
-function pickLatest<T extends { created_at: string }>(rows: T[] | null | undefined): T | null {
-  if (!rows || rows.length === 0) return null;
-  return [...rows].sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at))[0];
-}
 
 export function useEmails() {
   return useQuery({
-    queryKey: ["emails"],
+    queryKey: ["emails", "dashboard-view"],
     queryFn: async (): Promise<JoinedEmail[]> => {
       const { data, error } = await supabase
-        .from("emails")
-        .select("*, email_summaries(*), email_categories(*)")
+        .from("email_dashboard")
+        .select("*")
         .order("created_at", { ascending: false })
         .limit(500);
       if (error) throw error;
-      const rows = (data ?? []) as unknown as RawJoined[];
-      return rows.map((r) => {
-        const sum = pickLatest(r.email_summaries);
-        const cat = pickLatest(r.email_categories);
-        return {
-          ...r,
-          summary: sum?.summary ?? null,
-          rawCategory: cat?.category ?? null,
-          category: categoryFromRaw(cat?.category),
-        };
-      });
+      const rows = (data ?? []) as unknown as DashboardRow[];
+      return rows.map((r) => ({
+        id: r.id ?? r.gmail_message_id,
+        gmail_message_id: r.gmail_message_id,
+        gmail_thread_id: r.gmail_thread_id ?? null,
+        sender: r.sender ?? null,
+        subject: r.subject ?? null,
+        snippet: r.snippet ?? null,
+        body: r.body ?? null,
+        created_at: r.created_at,
+        summary: r.summary ?? null,
+        rawCategory: r.category ?? null,
+        category: categoryFromRaw(r.category),
+      }));
     },
   });
 }
