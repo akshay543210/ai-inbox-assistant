@@ -4,191 +4,183 @@ An AI-powered email management system that automatically fetches emails from Gma
 
 ## Features
 
-* 📧 Gmail Integration
-
-  * Automatically fetches incoming emails using n8n and Gmail API.
-  * Stores email metadata and content in Supabase.
-
-* 🤖 AI Email Summaries
-
-  * Generates concise summaries for each email using Google Gemini AI.
-
-* 🏷️ AI Email Classification
-
-  * Automatically categorizes emails into:
-
-    * Job
-    * Newsletter
-    * Finance
-    * Shopping
-    * Notification
-    * Social
-    * Other
-
-* 📊 Dashboard
-
-  * View all emails in one place.
-  * Filter emails by category.
-  * Search emails by sender, subject, or summary.
-  * View category statistics.
-
-* ☁️ Supabase Backend
-
-  * Stores emails, summaries, and categories.
-  * Row Level Security (RLS) enabled.
-  * Real-time database support.
+- 📧 Gmail Integration — automatic fetching via n8n + Gmail API
+- 🤖 AI Summaries via Google Gemini
+- 🏷️ AI Categorization (Job, Newsletter, Finance, Shopping, Notification, Social, Other)
+- 📊 Dashboard with search, filters, and stats
+- ☁️ Supabase backend with RLS
 
 ---
 
 ## Tech Stack
 
-### Frontend
-
-* React
-* TypeScript
-* Tailwind CSS
-* Lovable
-
-### Backend
-
-* Supabase
-* PostgreSQL
-
-### Automation
-
-* n8n
-
-### AI
-
-* Google Gemini API
-
-### Email
-
-* Gmail API
+- **Frontend:** React, TypeScript, Tailwind CSS, TanStack Start (Lovable)
+- **Backend:** Supabase (PostgreSQL, Auth, RLS)
+- **Automation:** n8n
+- **AI:** Google Gemini API
+- **Email:** Gmail API
 
 ---
 
-## Database Structure
+## 1. System Architecture
 
-### emails
+### Overview
 
-```sql
+The system automatically fetches emails from Gmail, processes them using AI, stores the results in Supabase, and displays them in a dashboard.
+
+### Architecture Flow
+
+```text
+Gmail Inbox
+    ↓
+Gmail API
+    ↓
+n8n Workflow
+    ↓
+Gemini AI
+    ↓
+Supabase
+    ↓
+Lovable Dashboard
+```
+
+### Components
+
+**Gmail API** — reads incoming emails and retrieves sender, subject, and metadata.
+
+**n8n** — automation layer that:
+- Detects new emails
+- Fetches email details
+- Sends content to Gemini
+- Saves results into Supabase
+
+**Gemini AI** — performs email summarization and categorization.
+
+**Supabase** — stores emails, summaries, and categories.
+
+**Lovable Frontend** — displays email list, categories, AI summaries, and dashboard statistics.
+
+---
+
+## 2. Database Schema
+
+### `emails`
+
+```text
 id
 gmail_message_id
 gmail_thread_id
 sender
 subject
 snippet
-body
 created_at
 ```
 
-### email_summaries
+Purpose: stores email information fetched from Gmail.
 
-```sql
+### `email_summaries`
+
+```text
 id
 gmail_message_id
 summary
 created_at
 ```
 
-### email_categories
+Purpose: stores AI-generated summaries.
 
-```sql
+### `email_categories`
+
+```text
 id
 gmail_message_id
 category
 created_at
 ```
 
+Purpose: stores AI-generated categories.
+
+**Supported categories:** Job, Newsletter, Finance, Shopping, Notification, Social, Other
+
+### `email_dashboard` (view)
+
+A joined view combining the three tables above on `gmail_message_id`. This is the primary data source for the dashboard.
+
 ---
 
-## Workflow
+## 3. AI Design
+
+### Email Summarization
+
+When a new email arrives:
+1. n8n sends the subject, sender, and snippet to Gemini.
+2. Gemini generates a concise summary.
+3. The summary is stored in Supabase.
+
+**Input:** Subject, Sender, Email snippet
+**Output:** 3-point summary
+
+### Email Categorization
+
+After summarization, Gemini classifies the email into one of:
+Job, Newsletter, Finance, Shopping, Notification, Social, Other.
+
+The category is stored in `email_categories`.
+
+### AI Workflow
 
 ```text
-Gmail Trigger
-      ↓
-Get Email Content
-      ↓
-Save Email to Supabase
-      ↓
-Generate AI Summary
-      ↓
+New Email
+     ↓
+Gemini Summary
+     ↓
 Save Summary
-      ↓
-Generate AI Category
-      ↓
+     ↓
+Gemini Classification
+     ↓
 Save Category
-      ↓
-Display in Dashboard
 ```
 
----
+### Source Attribution
 
-## Email Categories
-
-| Category     | Example                             |
-| ------------ | ----------------------------------- |
-| Job          | Job openings, recruiter emails      |
-| Newsletter   | Weekly newsletters, subscriptions   |
-| Finance      | Bank statements, payment alerts     |
-| Shopping     | Orders, deliveries, receipts        |
-| Notification | Account alerts, password changes    |
-| Social       | Friend requests, comments, mentions |
-| Other        | Uncategorized emails                |
+Each summary and category record is linked to its source email using `gmail_message_id`. The dashboard joins on this key via the `email_dashboard` view.
 
 ---
 
-## Screenshots
+## Current Limitations
 
-### Dashboard
+Not yet implemented (planned for future iterations):
 
-* Total Emails
-* Total Jobs
-* Total Newsletters
-* Total Notifications
-* Category-based filtering
-* Email summaries
-
-### Categories
-
-* Jobs
-* Newsletters
-* Finance
-* Shopping
-* Notifications
-* Social
-* Other
+- AI Chat Agent
+- Vector Search
+- pgvector Embeddings
+- NVIDIA NIM Integration
+- Thread-Level Summarization
+- Newsletter Deduplication
 
 ---
 
 ## Setup
 
-### 1. Clone Repository
+### 1. Configure Supabase
 
-```bash
-git clone https://github.com/yourusername/ai-email-organizer.git
-cd ai-email-organizer
+In `src/integrations/supabase/client.ts`, set:
+- `SUPABASE_URL`
+- `SUPABASE_PUBLISHABLE_KEY` (anon key)
+
+Run in the Supabase SQL editor to allow the dashboard to read the view:
+
+```sql
+GRANT SELECT ON public.email_dashboard TO authenticated;
 ```
 
-### 2. Configure Supabase
+### 2. Configure n8n
 
-Add:
+- Connect Gmail OAuth credentials
+- Add Gemini API key
+- Point Supabase nodes at your project
 
-```env
-VITE_SUPABASE_URL=YOUR_SUPABASE_URL
-VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
-```
-
-### 3. Configure Gemini
-
-Add your Gemini API key inside n8n credentials.
-
-### 4. Configure Gmail
-
-Connect Gmail OAuth credentials in n8n.
-
-### 5. Run Project
+### 3. Run
 
 ```bash
 npm install
@@ -199,39 +191,16 @@ npm run dev
 
 ## Security
 
-* Gmail authentication through OAuth.
-* Supabase Row Level Security enabled.
-* No Gmail passwords are stored.
-* API keys stored securely in environment variables.
-
----
-
-## Future Improvements
-
-* Gmail label automation
-* Bulk email actions
-* AI priority scoring
-* Daily email digest
-* Unsubscribe assistant
-* Spam detection
-* Email sentiment analysis
-* Mobile responsive dashboard
+- Gmail authentication via OAuth (no passwords stored)
+- Supabase Row Level Security enabled
+- API keys kept in n8n credentials / env vars
 
 ---
 
 ## Author
 
-**Akshay Muthyala**
-
-* Community Builder
-* Full Stack Developer
-* AI & Automation Enthusiast
-* Founder of PropFirm Knowledge
-
----
+**Akshay Muthyala** — Community Builder · Full Stack Developer · AI & Automation Enthusiast · Founder of PropFirm Knowledge
 
 ## License
 
-MIT License
-
-Feel free to use, modify, and contribute to the project. 🚀
+MIT
