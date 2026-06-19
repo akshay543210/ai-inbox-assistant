@@ -3,7 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 // TODO: paste your Supabase project URL and publishable/anon key here.
 // These values are safe for the frontend — Row Level Security is what protects your data.
 const SUPABASE_URL = "https://qslijvyhvyvqlowdxvdy.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "YOUR-PUBLISHABLE-OR-ANON-KEY";
+const SUPABASE_PUBLISHABLE_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbGlqdnlodnl2cWxvd2R4dmR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5ODc2NjcsImV4cCI6MjA2NTU2MzY2N30.HY9E1aK_YE63CKKZ4rbHTul8KCGaT83TnZam54XtqsE";
 
 export type EmailRow = {
   id: string | number;
