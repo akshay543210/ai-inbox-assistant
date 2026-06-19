@@ -102,6 +102,13 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+  --cat-job: oklch(0.55 0.18 250);
+  --cat-newsletter: oklch(0.6 0.16 30);
+  --cat-finance: oklch(0.55 0.16 150);
+  --cat-shopping: oklch(0.6 0.18 320);
+  --cat-notification: oklch(0.62 0.18 60);
+  --cat-social: oklch(0.6 0.17 200);
+  --cat-other: oklch(0.55 0.02 260);
 }
 
 .dark {
