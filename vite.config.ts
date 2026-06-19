@@ -12,4 +12,9 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    // Empty plugins array so Cloudflare's wrangler build pipeline can detect
+    // and inject @cloudflare/vite-plugin without failing setup.
+    plugins: [],
+  },
 });
