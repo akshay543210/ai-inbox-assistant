@@ -71,7 +71,7 @@ function ThreadSummariesPage() {
         />
       ) : (
         <>
-          <div className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+          <div className="overflow-x-auto rounded-lg border border-border bg-card shadow-sm">
             <Table>
               <TableHeader className="bg-muted/50">
                 <TableRow>
