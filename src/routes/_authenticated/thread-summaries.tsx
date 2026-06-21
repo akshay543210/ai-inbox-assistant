@@ -133,17 +133,9 @@ function ThreadSummariesPage() {
                 <div className="rounded-lg border bg-muted/40 p-4 text-sm leading-relaxed whitespace-pre-wrap">
                   {selected.summary ?? "No summary available"}
                 </div>
-                <div className="grid grid-cols-2 gap-4 text-xs text-muted-foreground">
-                  <div>
-                    <div className="font-semibold uppercase tracking-wider">Created</div>
-                    <div className="mt-1">{format(new Date(selected.created_at), "PPP p")}</div>
-                  </div>
-                  <div>
-                    <div className="font-semibold uppercase tracking-wider">Updated</div>
-                    <div className="mt-1">
-                      {selected.updated_at ? format(new Date(selected.updated_at), "PPP p") : "—"}
-                    </div>
-                  </div>
+                <div className="text-xs text-muted-foreground">
+                  <div className="font-semibold uppercase tracking-wider">Created</div>
+                  <div className="mt-1">{format(new Date(selected.created_at), "PPP p")}</div>
                 </div>
               </div>
             </>
