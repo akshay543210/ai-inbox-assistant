@@ -11,7 +11,7 @@ export const Route = createFileRoute("/_authenticated/assistant")({
 
 type ChatMessage = { role: "user" | "assistant"; content: string; ts: number };
 
-const WEBHOOK_URL = "https://n8n-latest-bx7m.onrender.com/webhook-test/email-chat";
+const WEBHOOK_URL = "https://n8n-latest-bx7m.onrender.com/webhook/email-chat";
 
 const SUGGESTED = [
   "Show job emails",
