@@ -77,8 +77,7 @@ function ThreadSummariesPage() {
                 <TableRow>
                   <TableHead className="w-[220px]">Thread ID</TableHead>
                   <TableHead>Summary</TableHead>
-                  <TableHead className="w-[140px]">Created</TableHead>
-                  <TableHead className="w-[140px]">Updated</TableHead>
+                  <TableHead className="w-[160px]">Created</TableHead>
                   <TableHead className="w-[100px] text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -91,9 +90,6 @@ function ThreadSummariesPage() {
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground tabular-nums">
                       {format(new Date(t.created_at), "MMM d, yyyy")}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground tabular-nums">
-                      {t.updated_at ? format(new Date(t.updated_at), "MMM d, yyyy") : "—"}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setSelected(t); }}>
