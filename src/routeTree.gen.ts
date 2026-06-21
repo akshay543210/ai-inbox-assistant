@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedThreadSummariesRouteImport } from './routes/_authenticated/thread-summaries'
+import { Route as AuthenticatedAssistantRouteImport } from './routes/_authenticated/assistant'
 import { Route as AuthenticatedEmailsIndexRouteImport } from './routes/_authenticated/emails.index'
 import { Route as AuthenticatedEmailsCategoryCategoryRouteImport } from './routes/_authenticated/emails.category.$category'
 
@@ -27,6 +29,17 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedThreadSummariesRoute =
+  AuthenticatedThreadSummariesRouteImport.update({
+    id: '/thread-summaries',
+    path: '/thread-summaries',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAssistantRoute = AuthenticatedAssistantRouteImport.update({
+  id: '/assistant',
+  path: '/assistant',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedEmailsIndexRoute =
@@ -45,11 +58,15 @@ const AuthenticatedEmailsCategoryCategoryRoute =
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthRoute
+  '/assistant': typeof AuthenticatedAssistantRoute
+  '/thread-summaries': typeof AuthenticatedThreadSummariesRoute
   '/emails/': typeof AuthenticatedEmailsIndexRoute
   '/emails/category/$category': typeof AuthenticatedEmailsCategoryCategoryRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
+  '/assistant': typeof AuthenticatedAssistantRoute
+  '/thread-summaries': typeof AuthenticatedThreadSummariesRoute
   '/': typeof AuthenticatedIndexRoute
   '/emails': typeof AuthenticatedEmailsIndexRoute
   '/emails/category/$category': typeof AuthenticatedEmailsCategoryCategoryRoute
@@ -58,19 +75,35 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/assistant': typeof AuthenticatedAssistantRoute
+  '/_authenticated/thread-summaries': typeof AuthenticatedThreadSummariesRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/emails/': typeof AuthenticatedEmailsIndexRoute
   '/_authenticated/emails/category/$category': typeof AuthenticatedEmailsCategoryCategoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/emails/' | '/emails/category/$category'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/assistant'
+    | '/thread-summaries'
+    | '/emails/'
+    | '/emails/category/$category'
   fileRoutesByTo: FileRoutesByTo
-  to: '/auth' | '/' | '/emails' | '/emails/category/$category'
+  to:
+    | '/auth'
+    | '/assistant'
+    | '/thread-summaries'
+    | '/'
+    | '/emails'
+    | '/emails/category/$category'
   id:
     | '__root__'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/assistant'
+    | '/_authenticated/thread-summaries'
     | '/_authenticated/'
     | '/_authenticated/emails/'
     | '/_authenticated/emails/category/$category'
@@ -104,6 +137,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/thread-summaries': {
+      id: '/_authenticated/thread-summaries'
+      path: '/thread-summaries'
+      fullPath: '/thread-summaries'
+      preLoaderRoute: typeof AuthenticatedThreadSummariesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/assistant': {
+      id: '/_authenticated/assistant'
+      path: '/assistant'
+      fullPath: '/assistant'
+      preLoaderRoute: typeof AuthenticatedAssistantRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/emails/': {
       id: '/_authenticated/emails/'
       path: '/emails'
@@ -122,12 +169,16 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAssistantRoute: typeof AuthenticatedAssistantRoute
+  AuthenticatedThreadSummariesRoute: typeof AuthenticatedThreadSummariesRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedEmailsIndexRoute: typeof AuthenticatedEmailsIndexRoute
   AuthenticatedEmailsCategoryCategoryRoute: typeof AuthenticatedEmailsCategoryCategoryRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAssistantRoute: AuthenticatedAssistantRoute,
+  AuthenticatedThreadSummariesRoute: AuthenticatedThreadSummariesRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedEmailsIndexRoute: AuthenticatedEmailsIndexRoute,
   AuthenticatedEmailsCategoryCategoryRoute:
@@ -144,13 +195,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
