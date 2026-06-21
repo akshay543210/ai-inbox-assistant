@@ -41,11 +41,15 @@ function AssistantPage() {
     setMessages((m) => [...m, { role: "user", content: message, ts: Date.now() }]);
     setLoading(true);
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 60000);
       const res = await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ question: message, message }),
+        signal: controller.signal,
       });
+      clearTimeout(timeout);
       const text = await res.text();
       let answer = "";
       try {

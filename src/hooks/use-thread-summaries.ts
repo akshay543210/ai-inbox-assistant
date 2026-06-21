@@ -6,7 +6,7 @@ export type ThreadSummaryRow = {
   gmail_thread_id: string;
   summary: string | null;
   created_at: string;
-  updated_at: string | null;
+  updated_at?: string | null;
 };
 
 export function useThreadSummaries() {
@@ -16,7 +16,7 @@ export function useThreadSummaries() {
       const { data, error } = await supabase
         .from("thread_summaries")
         .select("*")
-        .order("updated_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false })
         .limit(500);
       if (error) throw error;
       return (data ?? []) as unknown as ThreadSummaryRow[];

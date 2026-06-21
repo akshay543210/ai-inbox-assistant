@@ -63,9 +63,9 @@ export function EmailTable({ emails, showSearch = true }: { emails: JoinedEmail[
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {slice.map((e) => (
+                {slice.map((e, i) => (
                   <TableRow
-                    key={String(e.id)}
+                    key={`${String(e.id)}-${e.gmail_message_id}-${i}`}
                     onClick={() => setSelected(e)}
                     className="cursor-pointer"
                   >

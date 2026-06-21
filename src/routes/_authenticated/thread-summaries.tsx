@@ -77,8 +77,7 @@ function ThreadSummariesPage() {
                 <TableRow>
                   <TableHead className="w-[220px]">Thread ID</TableHead>
                   <TableHead>Summary</TableHead>
-                  <TableHead className="w-[140px]">Created</TableHead>
-                  <TableHead className="w-[140px]">Updated</TableHead>
+                  <TableHead className="w-[160px]">Created</TableHead>
                   <TableHead className="w-[100px] text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -91,9 +90,6 @@ function ThreadSummariesPage() {
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground tabular-nums">
                       {format(new Date(t.created_at), "MMM d, yyyy")}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground tabular-nums">
-                      {t.updated_at ? format(new Date(t.updated_at), "MMM d, yyyy") : "—"}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setSelected(t); }}>
@@ -137,17 +133,9 @@ function ThreadSummariesPage() {
                 <div className="rounded-lg border bg-muted/40 p-4 text-sm leading-relaxed whitespace-pre-wrap">
                   {selected.summary ?? "No summary available"}
                 </div>
-                <div className="grid grid-cols-2 gap-4 text-xs text-muted-foreground">
-                  <div>
-                    <div className="font-semibold uppercase tracking-wider">Created</div>
-                    <div className="mt-1">{format(new Date(selected.created_at), "PPP p")}</div>
-                  </div>
-                  <div>
-                    <div className="font-semibold uppercase tracking-wider">Updated</div>
-                    <div className="mt-1">
-                      {selected.updated_at ? format(new Date(selected.updated_at), "PPP p") : "—"}
-                    </div>
-                  </div>
+                <div className="text-xs text-muted-foreground">
+                  <div className="font-semibold uppercase tracking-wider">Created</div>
+                  <div className="mt-1">{format(new Date(selected.created_at), "PPP p")}</div>
                 </div>
               </div>
             </>
