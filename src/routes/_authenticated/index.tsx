@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEmails } from "@/hooks/use-emails";
+import { useThreadSummaries } from "@/hooks/use-thread-summaries";
 import { StatsCards } from "@/components/stats-cards";
 import { EmailTable } from "@/components/email-table";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/_authenticated/")({
 
 function DashboardPage() {
   const { data, isLoading, error } = useEmails();
+  const { data: threads } = useThreadSummaries();
 
   return (
     <div className="mx-auto max-w-7xl space-y-8">
@@ -34,7 +36,7 @@ function DashboardPage() {
         </div>
       ) : (
         <>
-          <StatsCards emails={data ?? []} />
+          <StatsCards emails={data ?? []} threadSummaryCount={threads?.length ?? 0} />
 
           <section className="space-y-3">
             <div className="flex items-center justify-between">

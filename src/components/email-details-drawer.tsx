@@ -2,7 +2,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { CategoryBadge } from "@/components/category-badge";
 import { format } from "date-fns";
 import type { JoinedEmail } from "@/hooks/use-emails";
-import { Sparkles } from "lucide-react";
+import { useThreadSummary } from "@/hooks/use-thread-summaries";
+import { Sparkles, MessagesSquare } from "lucide-react";
 
 export function EmailDetailsDrawer({
   email,
@@ -13,6 +14,8 @@ export function EmailDetailsDrawer({
   open: boolean;
   onOpenChange: (o: boolean) => void;
 }) {
+  const { data: threadSummary } = useThreadSummary(email?.gmail_thread_id ?? null);
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
@@ -40,6 +43,18 @@ export function EmailDetailsDrawer({
                 </p>
               </section>
 
+              {threadSummary?.summary ? (
+                <section className="rounded-lg border border-border bg-muted/40 p-4">
+                  <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <MessagesSquare className="h-3.5 w-3.5" />
+                    Thread Summary
+                  </div>
+                  <p className="text-sm leading-relaxed text-foreground whitespace-pre-wrap">
+                    {threadSummary.summary}
+                  </p>
+                </section>
+              ) : null}
+
               <section>
                 <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Email Content
@@ -50,6 +65,12 @@ export function EmailDetailsDrawer({
                   )}
                 </div>
               </section>
+
+              {email.gmail_thread_id ? (
+                <div className="text-xs text-muted-foreground font-mono">
+                  Thread: {email.gmail_thread_id}
+                </div>
+              ) : null}
             </div>
           </>
         ) : null}

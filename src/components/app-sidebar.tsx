@@ -12,7 +12,7 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { CATEGORIES } from "@/lib/categories";
-import { LayoutDashboard, Mail, LogOut, Sparkles } from "lucide-react";
+import { LayoutDashboard, Mail, LogOut, Sparkles, MessagesSquare, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
@@ -60,6 +60,22 @@ export function AppSidebar() {
                   <Link to="/emails">
                     <Mail />
                     <span>All Emails</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname === "/thread-summaries"}>
+                  <Link to="/thread-summaries">
+                    <MessagesSquare />
+                    <span>Thread Summaries</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname === "/assistant"}>
+                  <Link to="/assistant">
+                    <Bot />
+                    <span>AI Assistant</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
