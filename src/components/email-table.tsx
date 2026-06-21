@@ -51,7 +51,7 @@ export function EmailTable({ emails, showSearch = true }: { emails: JoinedEmail[
         <EmptyState icon={Inbox} title="No emails found" description="Try a different search or category." />
       ) : (
         <>
-          <div className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+          <div className="overflow-x-auto rounded-lg border border-border bg-card shadow-sm">
             <Table>
               <TableHeader className="bg-muted/50">
                 <TableRow>

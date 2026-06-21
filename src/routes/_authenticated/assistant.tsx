@@ -66,11 +66,11 @@ function AssistantPage() {
   };
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-6rem)] max-w-4xl flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-            <Bot className="h-6 w-6" /> AI Assistant
+    <div className="mx-auto flex h-[calc(100dvh-7rem)] max-w-4xl flex-col gap-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight flex items-center gap-2">
+            <Bot className="h-5 w-5 sm:h-6 sm:w-6 shrink-0" /> AI Assistant
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">Ask anything about your inbox.</p>
         </div>
