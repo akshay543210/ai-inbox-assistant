@@ -51,14 +51,17 @@ function AssistantPage() {
       });
       clearTimeout(timeout);
       const text = await res.text();
-      let answer = "";
+      let answer = "No response received.";
       try {
         const json = JSON.parse(text);
-        answer = json.answer ?? json.output ?? json.response ?? text;
+        const candidate = json.reply ?? json.data?.reply ?? json.response?.reply;
+        if (typeof candidate === "string" && candidate.trim()) {
+          answer = candidate;
+        }
       } catch {
-        answer = text;
+        if (text.trim()) answer = text;
       }
-      setMessages((m) => [...m, { role: "assistant", content: answer || "(empty response)", ts: Date.now() }]);
+      setMessages((m) => [...m, { role: "assistant", content: answer, ts: Date.now() }]);
     } catch (e) {
       setMessages((m) => [
         ...m,
