@@ -51,10 +51,14 @@ function AssistantPage() {
       });
       clearTimeout(timeout);
       const text = await res.text();
+      console.log('N8N RESPONSE:', res);
       let answer = "No response received.";
+      let data: unknown;
       try {
-        const json = JSON.parse(text);
-        const candidate = json.reply ?? json.data?.reply ?? json.response?.reply;
+        data = JSON.parse(text);
+        console.log('N8N RESPONSE JSON:', data);
+        const json = data as Record<string, unknown>;
+        const candidate = json.reply ?? (json.data as Record<string, unknown> | undefined)?.reply ?? (json.response as Record<string, unknown> | undefined)?.reply;
         if (typeof candidate === "string" && candidate.trim()) {
           answer = candidate;
         }
