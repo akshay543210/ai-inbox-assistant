@@ -50,14 +50,9 @@ function AssistantPage() {
         signal: controller.signal,
       });
       clearTimeout(timeout);
-      const data = await response.json();
-      console.log("N8N RESPONSE JSON:", data);
-      const reply =
-        data?.reply ||
-        data?.data?.reply ||
-        data?.message ||
-        "No response received.";
-      setMessages((m) => [...m, { role: "assistant", content: reply, ts: Date.now() }]);
+      const text = await response.text();
+      console.log("N8N RESPONSE TEXT:", text);
+      setMessages((m) => [...m, { role: "assistant", content: text || "No response received.", ts: Date.now() }]);
     } catch (e) {
       setMessages((m) => [
         ...m,
