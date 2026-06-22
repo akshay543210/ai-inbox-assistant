@@ -43,29 +43,21 @@ function AssistantPage() {
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 60000);
-      const res = await fetch(WEBHOOK_URL, {
+      const response = await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: message, message }),
         signal: controller.signal,
       });
       clearTimeout(timeout);
-      const text = await res.text();
-      console.log('N8N RESPONSE:', res);
-      let answer = "No response received.";
-      let data: unknown;
-      try {
-        data = JSON.parse(text);
-        console.log('N8N RESPONSE JSON:', data);
-        const json = data as Record<string, unknown>;
-        const candidate = json.reply ?? (json.data as Record<string, unknown> | undefined)?.reply ?? (json.response as Record<string, unknown> | undefined)?.reply;
-        if (typeof candidate === "string" && candidate.trim()) {
-          answer = candidate;
-        }
-      } catch {
-        if (text.trim()) answer = text;
-      }
-      setMessages((m) => [...m, { role: "assistant", content: answer, ts: Date.now() }]);
+      const data = await response.json();
+      console.log("N8N RESPONSE JSON:", data);
+      const reply =
+        data?.reply ||
+        data?.data?.reply ||
+        data?.message ||
+        "No response received.";
+      setMessages((m) => [...m, { role: "assistant", content: reply, ts: Date.now() }]);
     } catch (e) {
       setMessages((m) => [
         ...m,
